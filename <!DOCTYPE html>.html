@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>СИБКАРТ — Новая система картинга</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    :root {
+      --main: #8B5CF6;
+      --bg: #050508;
+      --text: rgba(255,255,255,0.92);
+      --muted: rgba(255,255,255,0.55);
+      --content-max-width: 900px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      background: radial-gradient(circle at top, #120a2a, var(--bg));
+      color: var(--text);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
+    }
+
+    /* ===== CART ===== */
+    .kart {
+      position: fixed;
+      bottom: 32px;
+      left: 0;
+      width: 170px;
+      z-index: 3;
+      pointer-events: none;
+      will-change: transform, opacity;
+      opacity: 1;
+    }
+
+    /* ===== PARTICLES ===== */
+    .particle {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      opacity: 0.6;
+      z-index: 2;
+      animation: fadeOut 1.2s forwards;
+    }
+
+    .smoke {
+      background: rgba(200,200,200,0.35);
+      filter: blur(6px);
+    }
+
+    .dust {
+      background: rgba(180,160,120,0.45);
+      filter: blur(2px);
+    }
+
+    @keyframes fadeOut {
+      to {
+        transform: translateY(-40px) scale(1.6);
+        opacity: 0;
+      }
+      
+    }
+    @keyframes pulse {
+  0% {
+    box-shadow:
+      0 0 0 4px rgba(139,92,246,0.35),
+      0 0 14px rgba(139,92,246,0.55);
+  }
+  50% {
+    box-shadow:
+      0 0 0 6px rgba(139,92,246,0.45),
+      0 0 26px rgba(139,92,246,0.85);
+  }
+  100% {
+    box-shadow:
+      0 0 0 4px rgba(139,92,246,0.35),
+      0 0 14px rgba(139,92,246,0.55);
+  }
+}
+
+    /* ===== CONTENT ===== */
+    section {
+      min-height: 100svh;
+      padding: 100px 10vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 40px;
+      align-items: center;
+    }
+.hero {
+  align-items: center;
+  text-align: center;
+  padding-top: 10svh;
+}
+
+    .title {
+      font-size: clamp(56px, 10vw, 120px);
+      font-weight: 800;
+      letter-spacing: 6px;
+      color: transparent;
+      -webkit-text-stroke: 2px var(--main);
+    }
+
+    .subtitle {
+      margin-top: 24px;
+      font-size: 20px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: var(--content-max-width);
+      text-align: center;
+    }
+
+    .subtitle span {
+      display: block;
+      text-transform: none;
+    }
+
+    .glass {
+      background: linear-gradient(
+        135deg,
+        rgba(139,92,246,0.18),
+        rgba(255,255,255,0.03)
+      );
+      border: 1px solid rgba(139,92,246,0.35);
+      backdrop-filter: blur(18px);
+      border-radius: 22px;
+      padding: 56px;
+      max-width: var(--content-max-width);
+    }
+
+    .glass h2 {
+      font-size: 36px;
+      margin-bottom: 36px;
+      color: var(--main);
+      text-align: center;
+    }
+
+    .glass p {
+      font-size: 18px;
+      line-height: 2;
+      margin-bottom: 20px;
+      color: var(--muted);
+      text-align: center;
+    }
+.config-wrapper {
+  display: block;
+}
+
+.config-visual {
+  position: relative;
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
+  overflow: visible;
+  /* визуальное смещение вправо */
+  transform: translateX(3%);
+}
+
+.config-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+/* ===== HOTSPOTS ===== */
+.config-visual {
+  position: relative; /* важно: точки позиционируются относительно блока */
+}
+
+.hotspot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  z-index: 3;
+}
+
+.hotspot:focus {
+  outline: none;
+}
+
+.hotspot .dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: block;
+
+  background: radial-gradient(
+    circle at 30% 30%,
+    #ffffff,
+    #8B5CF6 45%,
+    #6D28D9 75%
+  );
+
+  box-shadow:
+    0 0 0 4px rgba(139,92,246,0.35),
+    0 0 18px rgba(139,92,246,0.65);
+
+  animation: pulse 2.6s ease-in-out infinite;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hotspot:hover .dot,
+.hotspot:focus .dot {
+  transform: scale(1.25);
+  box-shadow:
+    0 0 0 6px rgba(139,92,246,0.55),
+    0 0 34px rgba(139,92,246,1);
+}
+.tooltip {
+  position: absolute;
+  min-width: 220px;
+  max-width: 320px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(139,92,246,0.35);
+  background: rgba(5,5,8,0.88);
+  backdrop-filter: blur(10px);
+  z-index: 4;
+  display: none;
+}
+
+.tooltip-title {
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--main);
+  font-size: 14px;
+}
+
+.tooltip-text {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--muted);
+}
+
+@media (max-width: 768px) {
+  .hotspot .dot {
+    width: 12px;
+    height: 12px;
+  }
+  .tooltip {
+    max-width: 260px;
+  }
+}
+
+.config-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.config-list li {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.config-list strong {
+  color: var(--text);
+}
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      width: 100%;
+      max-width: var(--content-max-width);
+    }
+
+    .card {
+      padding: 34px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(139,92,246,0.28);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 18px 40px rgba(139,92,246,0.3);
+    }
+
+    .card h3, .card p {
+      text-align: center;
+    }
+
+    .card h3 {
+      color: var(--main);
+      margin-bottom: 14px;
+      font-size: 22px;
+    }
+
+.nav {
+  grid-column: 1 / -1;   /* занять всю ширину грида */
+  display: flex;
+  justify-content: center;
+  gap: 22px;
+  padding-top: 6px;
+}
+
+.nav-link {
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+    /* ===== СМЕЩЕНИЕ ПОСЛЕДНИХ ДВУХ КАРТОЧЕК В ТРЕТЬЕЙ СТРОКЕ ===== */
+    @media (min-width: 1200px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .grid > .card:nth-child(7),
+      .grid > .card:nth-child(8) {
+        transform: translateX(55%);
+      }
+    }
+
+    /* ===== CTA ===== */
+    .cta {
+      text-align: center;
+      max-width: var(--content-max-width);
+      margin: 0 auto;
+    }
+
+    .btn {
+      margin-top: 24px;
+      padding: 18px 44px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 0 30px rgba(139,92,246,0.6);
+    }
+/* ===== FOOTER ===== */
+.footer {
+  padding: 48px 6vw 36px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.footer-partners {
+  margin-bottom: 28px;
+}
+
+.footer-partners-text {
+  font-size: 14px;
+  margin-bottom: 18px;
+  color: var(--muted);
+}
+
+.footer-partners-logos {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 48px;
+}
+
+.footer-partners-logos img {
+  height: 64px;
+  max-width: 200px;
+  object-fit: contain;
+  opacity: 0.85;
+}
+
+.footer-copy {
+  font-size: 14px;
+}
+
+    /* ===== MEDIA QUERIES ===== */
+    @media (max-width: 1024px) {
+      .glass { padding: 48px; }
+      section { padding: 100px 8vw; }
+    }
+
+    @media (max-width: 768px) {
+      .glass { padding: 40px; }
+      section { padding: 100px 6vw; }
+      .title { font-size: clamp(48px, 12vw, 100px); }
+      .subtitle { font-size: 18px; line-height: 1.8; }
+      .kart { width: 140px; }
+    }
+
+    @media (max-width: 480px) {
+      section { padding: 80px 5vw; }
+      .title { font-size: clamp(36px, 14vw, 70px); }
+      .subtitle { font-size: 16px; line-height: 1.7; }
+      .kart { width: 120px; }
+      .card { padding: 24px; }
+      .btn { padding: 14px 36px; font-size: 16px; }
+    }
+
+    @media (max-width: 360px) {
+      .kart { width: 100px; }
+      .card { padding: 20px; }
+    }
+  
+@media (max-width: 768px) {
+  .partner-logo {
+    height: 48px;
+  }
+
+  .partner-text {
+    font-size: 12px;
+    line-height: 1.4;
+  }
+}
+/* Убираем принудительные переносы строк в тексте партнёров на широких экранах */
+@media (min-width: 769px) {
+  .partner-text br {
+    display: none;
+  }
+  @media (max-width: 768px) {
+  .footer-partners-logos {
+    gap: 28px;
+  }
+
+  .footer-partners-logos img {
+    height: 48px;
+  }
+}
+}
+.config-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.config-list li {
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin-bottom: 14px;
+  text-align: left;
+}
+
+.config-list strong {
+  color: var(--text);
+}
+  </style>
+</head>
+
+<body>
+
+  <!-- CART -->
+  <img src="images.png" alt="Карт СИБКАРТ" class="kart" id="kart">
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="title">СИБКАРТ</div>
+      <div class="subtitle">
+        <span>Новая система картинга</span>
+        <span>Бизнес-подход к скорости</span>
+      </div>
+    </section>
+
+    <!-- О КОМПАНИИ -->
+<section id="about">
+  <div class="glass">
+    <h2>О компании</h2>
+    <p>
+      ООО «СИБКАРТ» — молодой российский стартап, создающий передовые карта для кольцевого картинга. Мы разрабатываем полностью отечественные продукты, используя лучшие материалы и инновационные технологии, включая модули ИИ-телеметрии для анализа заездов в реальном времени.
+    </p>
+    <p>
+      Наша цель — поднять уровень картинга в России, объединяя инженерный подход, качество и скорость в каждом элементе. Мы стремимся создавать карта, которые могут конкурировать с зарубежными аналогами, устанавливая новый стандарт отечественного картинга и открывая новые возможности для спортсменов и любителей скорости.
+    </p>
+    <p>
+      Каждый наш продукт — результат тщательной проработки и тестирования, отражающий страсть команды к технологиям и совершенству в деталях.
+    </p>
+    <p>
+      <strong>СИБКАРТ — это будущее российской гоночной индустрии, доступное уже сегодня.</strong>
+    </p>
+  </div>
+</section>
+<!-- КОНФИГУРАЦИЯ -->
+<section id="configuration">
+  <h2>Конфигурация</h2>
+
+  <div class="config-wrapper glass">
+    <div class="config-visual">
+  <img
+    src="kart-cad.png"
+    alt="Конфигурация карта СИБКАРТ"
+    class="config-image"
+  >
+
+  <!-- HOTSPOTS (пока примерные позиции — потом подвинем) -->
+  <button class="hotspot" style="left: 67%; top: 55%;"
+    data-title="Модульная рама"
+    data-text="Пространственная модульная рама из лёгких и прочных материалов. Обеспечивает высокую жёсткость, точную геометрию и защиту пилота. Модульная конструкция позволяет быстро заменять элементы и адаптировать карт под разные трассы.">
+    <span class="dot" aria-hidden="true"></span>
+  </button>
+
+  <button class="hotspot" style="left: 80%; top: 25%;"
+    data-title="Двигатель"
+    data-text="2-тактный бензиновый двигатель 125 см³ мощностью до 28 л.с. Мгновенный отклик на газ и разгон до 100 км/ч менее чем за 5 секунд. Оптимизирован для стабильной работы в гоночных режимах.">
+    <span class="dot" aria-hidden="true"></span>
+  </button>
+
+  <button class="hotspot" style="left: 50%; top: 22%;"
+    data-title="Рулевое управление"
+    data-text="Точное рулевое управление обеспечивает прямую передачу усилия и полный контроль над траекторией в поворотах и на высоких скоростях.">
+    <span class="dot" aria-hidden="true"></span>
+  </button>
+
+  <button class="hotspot" style="left: 19%; top: 48%;"
+    data-title="Тормозная система"
+    data-text="Гидравлическая тормозная система с высокой эффективностью замедления. Стабильная работа при экстремальных нагрузках и уверенный контроль скорости перед поворотами.">
+    <span class="dot" aria-hidden="true"></span>
+  </button>
+
+  <button class="hotspot" style="left: 42%; top: 26%;"
+  data-title="ИИ-телеметрия"
+  data-text="Интеллектуальная система телеметрии собирает данные в реальном времени и анализирует стиль вождения, траектории и динамику карта. ИИ выявляет ошибки и формирует рекомендации для повышения эффективности пилота.">
+  <span class="dot" aria-hidden="true"></span>
+</button>
+
+  <button class="hotspot" style="left: 62%; top: 40%;"
+    data-title="Сиденье пилота"
+    data-text="Гоночное эргономичное сиденье с оптимальной посадкой. Улучшает развесовку, контроль и снижает утомляемость пилота во время заезда.">
+    <span class="dot" aria-hidden="true"></span>
+  </button>
+
+  <!-- TOOLTIP -->
+  <div class="tooltip" id="cfgTooltip" aria-hidden="true">
+    <div class="tooltip-title" id="cfgTooltipTitle"></div>
+    <div class="tooltip-text" id="cfgTooltipText"></div>
+  </div>
+</div>
+    </div>
+</section>
+
+    <!-- ПРОДУКТОВАЯ ФИЛОСОФИЯ -->
+    <section id="product">
+      <h2>Продуктовая философия</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>ИИ-телеметрия</h3>
+          <p>Модули ИИ анализируют заезды в реальном времени, собирая данные и помогая совершенствовать стиль вождения, а также оптимизировать настройку картов для максимальной производительности.</p>
+        </div>
+        <div class="card">
+          <h3>Модульная рама</h3>
+          <p>Конструкция карта легко адаптируется под апгрейды и модернизации, что позволяет изменять характеристики под разные трассы и требования гонщиков.</p>
+        </div>
+        <div class="card">
+          <h3>Российская разработка</h3>
+          <p>Полный инженерный цикл выполняется в России: от проектирования до сборки и тестирования, что обеспечивает контроль качества и развитие отечественных технологий.</p>
+        </div>
+        <div class="card">
+          <h3>Лучшие материалы</h3>
+          <p>Используем высокотехнологичные и сертифицированные материалы, которые обеспечивают долговечность, безопасность и стабильную работу на протяжении всего срока службы.</p>
+        </div>
+        <div class="card">
+          <h3>Безопасность и надежность</h3>
+          <p>Каждый элемент карта проходит строгие испытания, чтобы обеспечить защиту гонщика и долговечность конструкции даже в экстремальных условиях.</p>
+        </div>
+        <div class="card">
+          <h3>Инновационный дизайн и эргономика</h3>
+          <p>Карта разрабатываются с учетом аэродинамики и удобства водителя, что повышает комфорт, контроль и скорость на трассе.</p>
+        </div>
+        <div class="card">
+          <h3>Адаптация под разные трассы</h3>
+          <p>Карта легко настраиваются под различные типы треков и условий, обеспечивая стабильное поведение и максимальную эффективность на любом покрытии.</p>
+        </div>
+        <div class="card">
+          <h3>Поддержка и развитие</h3>
+          <p>Мы сопровождаем каждый продукт технической поддержкой и рекомендациями, а также непрерывно развиваем технологии для будущих обновлений и новых моделей.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+   <section class="cta" id="cta">
+      <h2>Новая эра картинга начинается здесь</h2>
+      <button class="btn">Связаться с СИБКАРТ</button>
+    </section>
+
+  </main>
+<footer class="footer">
+  <div class="footer-partners">
+    <p class="footer-partners-text">
+      Проект реализован при поддержке Фонда содействия инновациям
+      в рамках программы «Студенческий стартап»
+      мероприятия «Платформа университетского технологического
+      предпринимательства» федерального проекта «Технологии».
+    </p>
+
+    <div class="footer-partners-logos">
+      <img src="fond.png" alt="Фонд содействия инновациям">
+      <img src="platform.png" alt="Платформа университетского технологического предпринимательства">
+    </div>
+  </div>
+
+  <div class="footer-copy">
+    © ООО «СИБКАРТ»
+  </div>
+</footer>
+  <script>
+    const kart = document.getElementById('kart');
+    let lastX = 0;
+
+    function spawnParticle(type, x, y, idle=false) {
+      const p = document.createElement('div');
+      p.className = `particle ${type}`;
+      const size = idle
+        ? (type === 'smoke' ? 10 + Math.random() * 8 : 3 + Math.random() * 3)
+        : (type === 'smoke' ? 18 + Math.random() * 14 : 6 + Math.random() * 6);
+      p.style.width = p.style.height = size + 'px';
+      p.style.left = x + 'px';
+      p.style.top = y + 'px';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 1200);
+    }
+
+    function idleSmoke() {
+      const rect = kart.getBoundingClientRect();
+      if (Math.random() < 0.2) {
+        spawnParticle('smoke', rect.left - 10, rect.top + 30, true);
+        spawnParticle('dust', rect.left - 6, rect.top + 48, true);
+      }
+      requestAnimationFrame(idleSmoke);
+    }
+
+    function updateKartPosition() {
+      const maxScroll = document.body.scrollHeight - window.innerHeight;
+      const scrollProgress = Math.min(window.scrollY / maxScroll, 1);
+
+      const kartWidth = kart.offsetWidth;
+      const visiblePart = kartWidth * 0.33; 
+      const startOffset = -kartWidth + visiblePart;
+      const pathWidth = window.innerWidth - visiblePart;
+
+      const x = startOffset + scrollProgress * (pathWidth - startOffset);
+      kart.style.transform = `translateX(${x}px)`;
+      kart.style.opacity = 1;
+
+      if (Math.abs(x - lastX) > 5) {
+        const rect = kart.getBoundingClientRect();
+        spawnParticle('smoke', rect.left - 10, rect.top + 30);
+        spawnParticle('dust', rect.left - 6, rect.top + 48);
+        lastX = x;
+      }
+    }
+
+    window.addEventListener('load', () => {
+      const kartWidth = kart.offsetWidth;
+      const visiblePart = kartWidth * 0.33;
+      kart.style.transform = `translateX(${-kartWidth + visiblePart}px)`;
+    });
+
+    window.addEventListener('scroll', updateKartPosition);
+    window.addEventListener('resize', updateKartPosition);
+    idleSmoke();
+    // ===== CONFIG HOTSPOTS TOOLTIP =====
+(function () {
+  const tooltip = document.getElementById('cfgTooltip');
+  const ttTitle = document.getElementById('cfgTooltipTitle');
+  const ttText = document.getElementById('cfgTooltipText');
+  const visual = document.querySelector('.config-visual');
+
+  if (!tooltip || !ttTitle || !ttText || !visual) return;
+
+  function showTooltip(hs) {
+    ttTitle.textContent = hs.dataset.title || '';
+    ttText.textContent = hs.dataset.text || '';
+
+    const visualRect = visual.getBoundingClientRect();
+    const hsRect = hs.getBoundingClientRect();
+
+    // координаты внутри .config-visual
+    const x = (hsRect.left - visualRect.left) + 18;
+    const y = (hsRect.top - visualRect.top) - 10;
+
+    tooltip.style.left = `${x}px`;
+    tooltip.style.top = `${y}px`;
+    tooltip.style.display = 'block';
+    tooltip.setAttribute('aria-hidden', 'false');
+  }
+
+  function hideTooltip() {
+    tooltip.style.display = 'none';
+    tooltip.setAttribute('aria-hidden', 'true');
+  }
+
+  // Hover
+  visual.addEventListener('mouseover', (e) => {
+    const hs = e.target.closest('.hotspot');
+    if (hs) showTooltip(hs);
+  });
+
+  visual.addEventListener('mouseout', (e) => {
+    const hs = e.target.closest('.hotspot');
+    if (hs) hideTooltip();
+  });
+
+  // Keyboard accessibility
+  visual.addEventListener('focusin', (e) => {
+    const hs = e.target.closest('.hotspot');
+    if (hs) showTooltip(hs);
+  });
+
+  visual.addEventListener('focusout', (e) => {
+    const hs = e.target.closest('.hotspot');
+    if (hs) hideTooltip();
+  });
+
+  // Hide on scroll (чтобы не "зависало")
+  window.addEventListener('scroll', hideTooltip, { passive: true });
+})();
+  </script>
+
+</body>
+</html>
